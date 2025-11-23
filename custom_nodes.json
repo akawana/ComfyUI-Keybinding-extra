@@ -1,0 +1,15 @@
+{
+    "title": "Keybinding Extra",
+    "description": "Adds configurable keyboard shortcuts to the ComfyUI frontend (Ctrl+/ to comment lines, prefix setting, toggle ON/OFF).",
+    "repo": "https://github.com/akawana/ComfyUI-Keybinding-extra",
+    "author": "akawana",
+    "version": "1.0.0",
+    "nodes": [
+        {
+            "id": "keybinding_extra",
+            "type": "python",
+            "file": "comment_toggle.js",
+            "description": "Frontend extension for keyboard shortcuts"
+        }
+    ]
+}
