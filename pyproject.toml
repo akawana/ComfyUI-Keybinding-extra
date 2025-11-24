@@ -1,0 +1,20 @@
+[project]
+name = "ComfyUI-Keybinding-Extra"
+version = "1.02"
+frontend_version = "1.02"
+description = "Adds shortcuts for commenting/deleting lines and includes a Text Cleaner & Splitter node for regional prompting."
+readme = "README.md"
+requires-python = ">=3.10"
+
+packages = ["comfyui_keybinding_extra"]
+
+[tool.comfy_node]
+package = "nodes"
+
+display_name = "Keybinding Extra"
+
+summary = "Keyboard shortcuts + Text Cleaner & Splitter node"
+
+tags = ["utility", "Regional prompting", "shortcuts"]
+
+
