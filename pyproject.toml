@@ -1,5 +1,6 @@
 [project]
 name = "comfyui-keybinding-extra"
+publisher = "akawana"
 version = "1.03.3"
 frontend_version = "1.02.3"
 description = "Adds shortcuts for commenting/deleting lines and includes a Text Cleaner & Splitter node for regional prompting."
@@ -19,3 +20,8 @@ publisher = "akawana"
 display_name = "Keybinding Extra"
 summary = "Keyboard shortcuts + Text Cleaner & Splitter node"
 tags = ["utility", "text", "regional prompting", "shortcuts"]
+
+[tool.comfy]
+PublisherId = "akawana" # TODO (fill in Publisher ID from Comfy Registry Website).
+DisplayName = "Keybinding Extra" # Display name for the Custom Node. Can be changed later.
+Icon = "https://example.com/icon.png"
