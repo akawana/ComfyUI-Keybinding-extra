@@ -132,6 +132,9 @@ Output:
     null
 ]
 ```
+![](preview.png)
+
+## Installation
 
 ```md
 cd ComfyUI/custom_nodes
