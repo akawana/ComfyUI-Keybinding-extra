@@ -6,7 +6,7 @@ Documentation = "https://github.com/akawana/ComfyUI-Keybinding-extra/wiki"
 "Bug Tracker" = "https://github.com/akawana/ComfyUI-Keybinding-extra/issues"
 
 [tool.comfy]
-PublisherId = ""
+PublisherId = "akawana"
 DisplayName = "ComfyUI-Keybinding-extra"
 Icon = ""
 includes = [] 
@@ -23,9 +23,6 @@ packages = ["comfyui_keybinding_extra"]
 
 [tool.comfy_node]
 package = "nodes"
-
 display_name = "Keybinding Extra"
-
 summary = "Keyboard shortcuts + Text Cleaner & Splitter node"
-
 tags = ["utility", "Regional prompting", "shortcuts"]
