@@ -1,4 +1,16 @@
 [project]
+[project.urls]
+Repository = "https://github.com/akawana/ComfyUI-Keybinding-extra"
+#  Used by Comfy Registry https://registry.comfy.org
+Documentation = "https://github.com/akawana/ComfyUI-Keybinding-extra/wiki"
+"Bug Tracker" = "https://github.com/akawana/ComfyUI-Keybinding-extra/issues"
+
+[tool.comfy]
+PublisherId = ""
+DisplayName = "ComfyUI-Keybinding-extra"
+Icon = ""
+includes = [] 
+# "requires-comfyui" = ">=1.0.0"  # ComfyUI version compatibility
 publisher = "akawana"
 name = "ComfyUI-Keybinding-Extra"
 version = "1.02"
@@ -17,5 +29,3 @@ display_name = "Keybinding Extra"
 summary = "Keyboard shortcuts + Text Cleaner & Splitter node"
 
 tags = ["utility", "Regional prompting", "shortcuts"]
-
-
