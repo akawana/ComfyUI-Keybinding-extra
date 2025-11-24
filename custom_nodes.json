@@ -1,6 +1,6 @@
 {
     "title": "Keybinding Extra",
-    "description": "Adds configurable keyboard shortcuts to the ComfyUI frontend (Ctrl+/ to comment lines, prefix setting, toggle ON/OFF).",
+    "description": "Adds shortcuts for commenting and deleting lines of text, with a configurable comment symbol. Includes a node that cleans comments from text and splits content using tags for Regional Prompting.",
     "repo": "https://github.com/akawana/ComfyUI-Keybinding-extra",
     "author": "akawana",
     "version": "1.0.0",
