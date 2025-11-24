@@ -136,10 +136,17 @@ Output:
 
 ## Installation
 
-```md
+You can install this extension in two ways:
+
+### 1. Through ComfyUI Manager (recommended)
+
+Open **ComfyUI Manager → Install**,  
+then simply search for **Keybinding** in the search bar.  
+Select the extension and click **Install**.
+
+### 2. Manual installation
+
+```bash
 cd ComfyUI/custom_nodes
 git clone https://github.com/akawana/ComfyUI-Keybinding-extra.git
-```
-
-
 
