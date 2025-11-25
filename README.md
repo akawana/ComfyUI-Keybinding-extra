@@ -10,7 +10,7 @@ The utility node can clean text, remove comments, and extract regional prompt ta
 
 ---
 
-## Features (v1.03)
+## Features (v1.04)
 
 This extension now provides **two keyboard shortcuts** and **one utility node**:
 

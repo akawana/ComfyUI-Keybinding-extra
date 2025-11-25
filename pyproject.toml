@@ -1,8 +1,8 @@
 [project]
 name = "comfyui-keybinding-extra"
 publisher = "akawana"
-version = "1.03.3"
-frontend_version = "1.02.3"
+version = "1.04"
+frontend_version = "1.04"
 description = "Adds shortcuts for commenting/deleting lines and includes a Text Cleaner & Splitter node for regional prompting."
 readme = "README.md"
 requires-python = ">=3.10"
