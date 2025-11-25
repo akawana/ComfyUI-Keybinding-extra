@@ -12,7 +12,7 @@ The utility node can clean text, remove comments, and extract regional prompt ta
 
 ## Features (v1.04)
 
-This extension now provides **two keyboard shortcuts** and **one utility node**:
+This extension now provides **3 keyboard shortcuts** and **1 utility node**:
 
 1. **Toggle line comment — `Ctrl + /`**
 2. **Delete line — `Ctrl + Shift + L`**

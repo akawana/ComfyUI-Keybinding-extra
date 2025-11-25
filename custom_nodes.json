@@ -3,7 +3,7 @@
     "description": "Adds shortcuts for commenting and deleting lines of text, with a configurable comment symbol. Includes a node that cleans comments from text and splits content using tags for Regional Prompting.",
     "repo": "https://github.com/akawana/ComfyUI-Keybinding-extra",
     "author": "akawana",
-    "version": "1.0.0",
+    "version": "1.04",
     "nodes": [
         {
             "id": "keybinding_extra",
