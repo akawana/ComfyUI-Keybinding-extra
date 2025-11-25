@@ -17,7 +17,7 @@ This extension now provides **3 keyboard shortcuts** and **1 utility node**:
 1. **Toggle line comment — `Ctrl + /`**
 2. **Delete line — `Ctrl + Shift + L`**
 3. **Move tag (word) under cursor down and comment it — `Ctrl + Shift + /`**
-4. Node: **Text Cleaner & Splitter node**
+4. Node: **Text Cleaner & Splitter node** (in utils/primitive category)
 
 ---
 
