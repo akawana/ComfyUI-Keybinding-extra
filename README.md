@@ -10,13 +10,14 @@ The utility node can clean text, remove comments, and extract regional prompt ta
 
 ---
 
-## Features (v1.02)
+## Features (v1.03)
 
 This extension now provides **two keyboard shortcuts** and **one utility node**:
 
 1. **Toggle line comment — `Ctrl + /`**
 2. **Delete line — `Ctrl + Shift + L`**
-3. **Text Cleaner & Splitter node** *(new in 1.02)*
+3. **Delete tag (word) under cursor, move it down and comment — `Ctrl + Shift + L`**
+4. Node: **Text Cleaner & Splitter node**
 
 ---
 
@@ -37,6 +38,19 @@ Works in all ComfyUI text editors/areas:
 
 ---
 
+### Configurable comment prefix
+
+In **ComfyUI → Settings → Keybinding Extra** you can set any prefix you want, for example:
+
+- `//`
+- `#`
+- `--`
+- `;`
+
+There is also an enable/disable toggle for the comment shortcut.
+
+---
+
 ### 2. Delete line — `Ctrl + Shift + L`
 
 Works in the same editors/areas:
@@ -52,16 +66,20 @@ Works in the same editors/areas:
 
 ---
 
-### Configurable comment prefix
+### 3. Move & Comment word — `Ctrl + Shift + /`
 
-In **ComfyUI → Settings → Keybinding Extra** you can set any prefix you want, for example:
+Works in the same editors/areas:
 
-- `//`
-- `#`
-- `--`
-- `;`
+- Ace  
+- CodeMirror  
+- Plain textarea inputs  
 
-There is also an enable/disable toggle for the comment shortcut.
+**Behavior**
+- Press `Ctrl + Shift + /` to cut the word under the cursor (or all selected words).
+- Removes the word(s) from anywhere in the line.
+- Inserts them on the next line.
+- Comments the moved word(s) using the comment prefix set in the extension settings.
+- Supports editor undo (`Ctrl + Z`) where possible.
 
 ---
 

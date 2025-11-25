@@ -10,6 +10,9 @@ const ENABLE_FALLBACK_KEY = "keybinding_extra.enabled";
 const DELETE_LINE_ENABLED_ID = "keybinding_extra.delete_line_enabled";
 const DELETE_LINE_ENABLED_FALLBACK_KEY = "keybinding_extra.delete_line_enabled";
 
+const EXTRACT_WORD_ENABLED_ID = "keybinding_extra.extract_word_enabled";
+const EXTRACT_WORD_FALLBACK_KEY = "keybinding_extra.extract_word_enabled";
+
 app.registerExtension({
     name: "Keybinding Extra",
 
@@ -21,27 +24,25 @@ app.registerExtension({
         }
     ],
 
+
     setup() {
         registerPrefixSetting();
 
-        window.addEventListener(
-            "keydown",
-            (e) => {
-                if (!isToggleEnabled()) return;
 
-                const isMac = navigator.platform.toUpperCase().includes("MAC");
-                const pressed = isMac ? e.metaKey : e.ctrlKey;
-                if (!pressed) return;
+	window.addEventListener("keydown", (e) => {
+	        console.log("[Key pressed");
+            if (!isToggleEnabled()) return;
 
-                if (e.key !== "/" && e.code !== "Slash") return;
+            const isMac = navigator.platform.toUpperCase().includes("MAC");
+            const mod = isMac ? e.metaKey : e.ctrlKey;
+            if (!mod || e.shiftKey) return;  // Not if Shift
 
+            if (e.key === "/" || e.code === "Slash") {
                 e.preventDefault();
                 e.stopPropagation();
-
                 runToggleOnFocusedEditor();
-            },
-            true
-        );
+            }
+        }, true);
 
         console.log("[Keybinding Extra] Loaded.");
 
@@ -58,6 +59,22 @@ app.registerExtension({
 	    }
 	}, true);
         console.log("[Keybinding Extra] Ctrl+Shift+L (Delete Line) loaded.");
+
+
+	window.addEventListener("keydown", (e) => {
+            if (!isExtractWordEnabled()) return;
+
+            const isMac = navigator.platform.toUpperCase().includes("MAC");
+            const mod = isMac ? e.metaKey : e.ctrlKey;
+
+            if (mod && e.shiftKey && (e.key === "/" || e.code === "Slash")) {
+                e.preventDefault();
+                e.stopPropagation();
+                extractWordToCommentedLine();
+            }
+        }, true);
+
+        console.log("[Keybinding Extra] All shortcuts loaded (Ctrl+/, Ctrl+Shift+L, Ctrl+Shift+/).");
 
     }
 });
@@ -103,10 +120,21 @@ function registerPrefixSetting() {
             }
         });
 
+	settingsApi.addSetting({
+            id: EXTRACT_WORD_ENABLED_ID,
+            category: ["Keybinding Extra", "Extract & Comment Word (Ctrl+Shift+/)", "A"],
+            name: "Enable extract word to commented line:",
+            type: "boolean",
+            defaultValue: true,
+            onChange: (value) => {
+                try { localStorage.setItem(EXTRACT_WORD_FALLBACK_KEY, value ? "true" : "false"); } catch {}
+            }
+        });
     } else {
 	if (!localStorage.getItem(FALLBACK_KEY)) localStorage.setItem(FALLBACK_KEY, defaultPrefix);
         if (localStorage.getItem(ENABLE_FALLBACK_KEY) == null) localStorage.setItem(ENABLE_FALLBACK_KEY, "true");
         if (localStorage.getItem(DELETE_LINE_ENABLED_FALLBACK_KEY) == null) localStorage.setItem(DELETE_LINE_ENABLED_FALLBACK_KEY, "true");
+	if (localStorage.getItem(EXTRACT_WORD_FALLBACK_KEY) == null) localStorage.setItem(EXTRACT_WORD_FALLBACK_KEY, "true");
     }
 }
 
@@ -131,16 +159,12 @@ function getCommentPrefix() {
     return sanitizePrefix(v);
 }
 
-function isDeleteLineEnabled() {
-    const api = app.ui?.settings;
-    if (api?.getSettingValue) {
-        try {
-            const val = api.getSettingValue(DELETE_LINE_ENABLED_ID);
-            if (val !== undefined) return !!val;
-        } catch {}
-    }
-    return localStorage.getItem(DELETE_LINE_ENABLED_FALLBACK_KEY) !== "false";
+
+function setToggleEnabled(v) {
+    const str = v ? "true" : "false";
+    try { localStorage.setItem(ENABLE_FALLBACK_KEY, str); } catch {}
 }
+
 
 function isToggleEnabled() {
     const settingsApi = app.ui?.settings;
@@ -161,10 +185,25 @@ function isToggleEnabled() {
         return true;
     }
 }
-
-function setToggleEnabled(v) {
-    const str = v ? "true" : "false";
-    try { localStorage.setItem(ENABLE_FALLBACK_KEY, str); } catch {}
+function isDeleteLineEnabled() {
+    const api = app.ui?.settings;
+    if (api?.getSettingValue) {
+        try {
+            const val = api.getSettingValue(DELETE_LINE_ENABLED_ID);
+            if (val !== undefined) return !!val;
+        } catch {}
+    }
+    return localStorage.getItem(DELETE_LINE_ENABLED_FALLBACK_KEY) !== "false";
+}
+function isExtractWordEnabled() {
+    const api = app.ui?.settings;
+    if (api?.getSettingValue) {
+        try {
+            const val = api.getSettingValue(EXTRACT_WORD_ENABLED_ID);
+            if (val !== undefined) return !!val;
+        } catch {}
+    }
+    return localStorage.getItem(EXTRACT_WORD_FALLBACK_KEY) !== "false";
 }
 
 
@@ -385,7 +424,7 @@ function toggleTextareaComments(ta) {
 
 /* -------------------------- DELETE LINE SHORTCUT: Ctrl+Shift+L -------------------------- */
 
-/* Ctrl+Shift+L — delete line where cursor is (no selection handling) */
+/* Ctrl+Shift+L â€” delete line where cursor is (no selection handling) */
 
 function deleteCurrentLine() {
     const ace = getActiveAceEditor();
@@ -428,6 +467,161 @@ function deleteCurrentLineTextarea(ta) {
 
     ta.setSelectionRange(lineStart, lineEnd);
     document.execCommand("delete");  
-
     ta.dispatchEvent(new Event("input", { bubbles: true }));
+}
+
+/* ---------------------- Extract word + comment: Ctrl+Shift+/ ---------------------- */
+
+function extractWordToCommentedLine() {
+    const ace = getActiveAceEditor();
+    if (ace) { extractWordAce(ace); return; }
+
+    const cm = getActiveCodeMirror();
+    if (cm) { extractWordCodeMirror(cm); return; }
+
+    const ta = getActiveTextarea();
+    if (ta) { extractWordTextarea(ta); return; }
+}
+
+/*  ACE  */
+function extractWordAce(editor) {
+    const pos = editor.getCursorPosition();
+    const session = editor.session;
+    const line = session.getLine(pos.row);
+    const { prefixSp } = computePrefix();
+
+    const token = session.getTokenAt(pos.row, pos.column) ||
+                  session.getTokenAt(pos.row, pos.column - 1);
+    if (!token || !token.value.trim()) return;
+
+    const word = token.value.trim();
+    const startCol = token.start;
+    const endCol   = startCol + token.value.length;
+
+    // trailing comma + spaces after the word
+    const after = line.substring(endCol);
+    const m = after.match(/^(\s*,\s*)/);
+    const trailing = m ? m[0] : "";
+
+    const commented = prefixSp + word + (trailing.includes(",") ? "," : "");
+
+    // remove word + trailing comma
+    session.replace({
+        start: { row: pos.row, column: startCol },
+        end:   { row: pos.row, column: endCol + trailing.length }
+    }, "");
+
+    // insert new commented line exactly one line below
+    const nextRow = pos.row + 1;
+    session.insert({ row: nextRow, column: 0 }, commented + "\n");
+
+    editor.moveCursorTo(nextRow, commented.length);
+    editor.clearSelection();
+    if (editor.undoManager) editor.undoManager.add();
+}
+
+/*  CodeMirror  */
+function extractWordCodeMirror(viewRoot) {
+    const view = viewRoot.cmView || viewRoot.view || viewRoot;
+    if (!view?.state || !view?.dispatch) return;
+
+    const { prefixSp } = computePrefix();
+    const head = view.state.selection.main.head;
+    const line = view.state.doc.lineAt(head);
+    const text = line.text;
+
+    // word boundaries
+    let from = head;
+    let to   = head;
+    while (from > line.from && /[\w\-]/.test(text[from - line.from - 1])) from--;
+    while (to   < line.to   && /[\w\-]/.test(text[to   - line.from]))     to++;
+
+    const word = text.slice(from - line.from, to - line.from).trim();
+    if (!word) return;
+
+    const after = text.substring(to - line.from);
+    const m = after.match(/^(\s*,\s*)/);
+    const trailing = m ? m[0] : "";
+
+    const commented = prefixSp + word + (trailing.includes(",") ? "," : "");
+
+    const insertPos = line.to + 1;                 // start of the next line
+
+    const changes = [
+        { from, to: to + trailing.length, insert: "" },          // remove word + comma
+        { from: insertPos, insert: commented + "\n" }            // new line below
+    ];
+
+    view.dispatch({
+        changes,
+        selection: { anchor: insertPos + commented.length },
+	userEvent: "input"
+    });
+}
+
+/*  Textarea  */
+function extractWordTextarea(ta) {
+    const { prefixSp } = computePrefix();
+    let start = ta.selectionStart;
+    let end   = ta.selectionEnd;
+    const value = ta.value;
+
+    let wordStart, wordEnd, word, trailing = "";
+
+    // ----- selection exists -----
+    if (start !== end) {
+        word = value.substring(start, end).trim();
+        if (!word) return;
+        wordStart = start;
+        wordEnd   = end;
+
+        const after = value.substring(end);
+        const m = after.match(/^(\s*,\s*)/);
+        trailing = m ? m[0] : "";
+    } 
+    // ----- no selection – find word under cursor -----
+    else {
+        let left  = start;
+        let right = start;
+        while (left  > 0 && /[\w\-]/.test(value[left-1]))  left--;
+        while (right < value.length && /[\w\-]/.test(value[right])) right++;
+
+        word = value.substring(left, right);
+        if (!word.trim()) return;
+
+        wordStart = left;
+        wordEnd   = right;
+
+        const after = value.substring(right);
+        const m = after.match(/^(\s*,\s*)/);
+        trailing = m ? m[0] : "";
+    }
+
+    const commented = prefixSp + word + (trailing.includes(",") ? "," : "");
+
+    // build new text: remove word+trailing and insert new line right after current line
+    const lineEndPos = value.indexOf("\n", wordStart);
+    const nextLineStart = (lineEndPos === -1 ? value.length : lineEndPos);
+
+    const newValue =
+        value.slice(0, wordStart) +                          // before word
+        value.slice(wordEnd + trailing.length, nextLineStart) + // rest of line (without word & comma)
+        "\n" + commented +                                   // new commented line
+        value.slice(nextLineStart);                          // everything after
+
+
+    const finalCursorPos = wordStart + commented.length + 1;
+
+    // Save current cursor (important!)
+    const savedStart = ta.selectionStart;
+    const savedEnd   = ta.selectionEnd;
+
+    // Replace entire content with undo support
+    ta.select();                                      // select all
+    document.execCommand("insertText", false, newValue);
+
+    // Force cursor to correct position — even after Ctrl+Z
+    setTimeout(() => {
+        ta.selectionStart = ta.selectionEnd = finalCursorPos;
+    }, 0);
 }
