@@ -10,6 +10,12 @@ The utility node can clean text, remove comments, and extract regional prompt ta
 
 ---
 
+## My other nodes:
+
+<a href="https://github.com/akawana/ComfyUI-Utils-extra" target="_blank">https://github.com/akawana/ComfyUI-Utils-extra</a>
+
+---
+
 ## Features (v1.04)
 
 This extension now provides **3 keyboard shortcuts** and **1 utility node**:
