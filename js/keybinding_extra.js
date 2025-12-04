@@ -13,6 +13,12 @@ const DELETE_LINE_ENABLED_FALLBACK_KEY = "keybinding_extra.delete_line_enabled";
 const EXTRACT_WORD_ENABLED_ID = "keybinding_extra.extract_word_enabled";
 const EXTRACT_WORD_FALLBACK_KEY = "keybinding_extra.extract_word_enabled";
 
+window.DEBUG_MODE = false;
+
+if (!window.DEBUG_MODE) {
+    console.log = () => {};
+}
+
 app.registerExtension({
     name: "Keybinding Extra",
 
@@ -578,7 +584,7 @@ function extractWordTextarea(ta) {
         const m = after.match(/^(\s*,\s*)/);
         trailing = m ? m[0] : "";
     } 
-    // ----- no selection – find word under cursor -----
+    // ----- no selection ï¿½ find word under cursor -----
     else {
         let left  = start;
         let right = start;
@@ -619,7 +625,7 @@ function extractWordTextarea(ta) {
     ta.select();                                      // select all
     document.execCommand("insertText", false, newValue);
 
-    // Force cursor to correct position — even after Ctrl+Z
+    // Force cursor to correct position ï¿½ even after Ctrl+Z
     setTimeout(() => {
         ta.selectionStart = ta.selectionEnd = finalCursorPos;
     }, 0);

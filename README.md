@@ -1,3 +1,16 @@
+## Other My Nodes
+
+### Utilities for working with Lists and toggling groups
+https://github.com/akawana/ComfyUI-Utils-extra
+
+### Extra shortcuts for editing texts and prompts + text splitting for Regional Prompts
+https://github.com/akawana/ComfyUI-Keybinding-extra
+
+### RGBYP 5-color mask editor
+https://github.com/akawana/ComfyUI-RGBYP-Mask-Editor
+
+---
+
 # Keybinding Extra
 
 A minimal ComfyUI extension that adds several quality-of-life tools:
@@ -7,12 +20,6 @@ A minimal ComfyUI extension that adds several quality-of-life tools:
 
 In ComfyUI Settings you can enable/disable shortcuts and customize their behavior.  
 The utility node can clean text, remove comments, and extract regional prompt tags.
-
----
-
-## My other nodes:
-
-<a href="https://github.com/akawana/ComfyUI-Utils-extra" target="_blank">https://github.com/akawana/ComfyUI-Utils-extra</a>
 
 ---
 
