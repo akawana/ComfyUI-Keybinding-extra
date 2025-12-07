@@ -96,74 +96,108 @@ Works in the same editors/areas:
 
 ---
 
-# Text Cleaner & Splitter *(new in v1.02)*
+## FP Folded Prompt
 
-A new node added in **category:** `utils/primitive`  
-**Node name:** `Text Cleaner & Splitter`
+Builds a **folder-based tree** from your prompt lines.  
+Useful for large projects where you need to store many previous prompts, reuse prompt blocks, or quickly insert sets of tags without typing them manually.
 
-This node performs two major tasks:
+The node saves JSON representations of your trees in `/input/prompts_folded/`.  
+This folder is optional — you may delete it at any time. All data is still stored in the workflow itself.
+
+<img src="preview_folded_prompt.jpg" width="100%"/>
+
+### Modes
+
+#### 1. Tree Mode
+
+- Visual folder tree  
+- Enable/disable lines  
+- Assign Regional Prompting areas  
+- Edit everything using the mouse  
+
+#### 2. Edit Mode
+
+Write your structure manually using `[Folder]` syntax:
+
+```text
+[Folder]
+string1 some text or tags, bla, bla, bla
+string2 some text or tags, bla, bla, bla
+
+[Folder/Subfolder]
+string1 some text or tags, bla, bla, bla
+string2 some text or tags, bla, bla, bla
+
+[Folder/Subfolder/SubSubfolder]
+string1 some text or tags, bla, bla, bla
+string2 some text or tags, bla, bla, bla
+```
+
+### Commenting
+
+Use `//` at the start of a line:
+
+```text
+string1 normal line
+// string2 commented line
+```
+
+Commented lines appear disabled in the tree.
+
+### Regional Prompting Support
+
+You may assign any line to one of **five** AR regions using HTML-like tags:
+
+```text
+<AR1>text...</>
+<AR2>text...</>
+<AR3>text...</>
+<AR4>text...</>
+<AR5>text...</>
+```
+
+**Important:** The closing tag is always `</>`.  
+This makes editing large texts easier — no need to rename closing tags.
+
+All AR features can also be controlled visually in Tree Mode.
+
+<img src="preview_folded_prompt_edit.jpg" width="100%"/>
 
 ---
 
-## 1. Text Cleaning (comment removal)
+## FP Text Clean And Split
 
-The node removes all comment lines from the input text.  
-The **comment symbol is configurable** in ComfyUI Settings (same setting used for CTRL+/).
+Utility node that processes raw text (either from FP Folded Prompt or from any normal text input).
 
-Output is provided on:
+### Behavior
 
-- **cleaned_text**
+- Removes commented lines (`// ...`)
+- Detects AR blocks (`<AR1>...</>`, … `<AR5>...</>`)
+- Extracts AR blocks and outputs them as a **list** on `ar_list`
+- Removes AR blocks from the main text and outputs the cleaned version
+
+### Why this is useful
+
+You can:
+
+- quickly compose prompts by hand  
+- comment out what you don't need  
+- use Regional Prompting without manually parsing anything  
+
+<img src="preview_text_clean.jpg" width="100%"/>
 
 ---
 
-## 2. Regional Prompt Tag Extraction
+## FP Text Area Plus
 
-The node supports **5 regional prompt tags**, written in uppercase:
+Simple utility text node.
 
-```html
-<AR1></>
-<AR2></>
-<AR3></>
-<AR4></>
-<AR5></>
-```
+### Features
 
-Each tag can contain multiple lines of text.  
-Comments inside the tag body are also removed.
-
-The extracted content is returned as a **fixed-length List** on output:
-
-- **ar_list**
-
-### Properties of `ar_list`:
-
-- Always has **exactly 5 elements**
-- Order corresponds to AR1 → AR5
-- Missing or empty regions return **null**
-- If tags repeat, their contents are **concatenated**
-- Closing tag is always strictly `</>`  
-- Newlines inside tags are preserved
-
-### Example
-
-Input text:
-
-```html
-<AR1> Bla1 bla1 bla1 bla1 bla1 </> 
-<AR3> Bla3 bla3 bla3 // Bla3 commented </> 
-<AR3> Another bla3 bla3 </>
-
-Output:
-
-[
-    "Bla1 bla1 bla1\nbla1 bla1",
-    null,
-    "Bla3 bla3 bla3\nAnother bla3 bla3",
-    null,
-    null
-]
-```
-<img src="preview1.jpg" width="100%"/>
+- Standard text input field  
+- Optional *before text* field  
+- Optional *after text* field  
+- Outputs the concatenated full result  
 
 ## Installation
 
@@ -172,12 +206,12 @@ You can install this extension in two ways:
 ### 1. Through ComfyUI Manager (recommended)
 
 Open **ComfyUI Manager → Install**,  
-then simply search for **Keybinding** in the search bar.  
+then simply search for **Folded prompts** in the search bar.  
 Select the extension and click **Install**.
 
 ### 2. Manual installation
 
 ```bash
 cd ComfyUI/custom_nodes
-git clone https://github.com/akawana/ComfyUI-Keybinding-extra.git
+git clone https://github.com/akawana/ComfyUI-Folded-Prompts.git
 
