@@ -2,11 +2,25 @@
 WEB_DIRECTORY = "./js"
 
 # Python nodes
-from .nodes.TextCleanerSplitter import NODE_CLASS_MAPPINGS, NODE_DISPLAY_NAME_MAPPINGS
+from .nodes.TextCleanerSplitter import NODE_CLASS_MAPPINGS as TCSTATE_MAPPINGS
+from .nodes.TextCleanerSplitter import NODE_DISPLAY_NAME_MAPPINGS as TCSTATE_DISPLAY
 
-# Required exports
-__all__ = [
-    "NODE_CLASS_MAPPINGS",
-    "NODE_DISPLAY_NAME_MAPPINGS",
-    "WEB_DIRECTORY",
-]
+from .nodes.FPTextCleanAndSplitt import NODE_CLASS_MAPPINGS as FPTSTATE_MAPPINGS
+from .nodes.FPTextCleanAndSplitt import NODE_DISPLAY_NAME_MAPPINGS as FPTSTATE_DISPLAY
+
+from .nodes.FPFoldedPrompts import NODE_CLASS_MAPPINGS as FPFSTATE_MAPPINGS
+from .nodes.FPFoldedPrompts import NODE_DISPLAY_NAME_MAPPINGS as FPFSTATE_DISPLAY
+
+NODE_CLASS_MAPPINGS = {
+    **TCSTATE_MAPPINGS,
+    **FPFSTATE_MAPPINGS,
+    **FPTSTATE_MAPPINGS,
+}
+
+NODE_DISPLAY_NAME_MAPPINGS = {
+    **TCSTATE_DISPLAY,
+    **FPFSTATE_DISPLAY,
+    **FPTSTATE_DISPLAY,
+}
+
+__all__ = ["NODE_CLASS_MAPPINGS", "NODE_DISPLAY_NAME_MAPPINGS", "WEB_DIRECTORY"]

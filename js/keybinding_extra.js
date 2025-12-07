@@ -13,7 +13,7 @@ const DELETE_LINE_ENABLED_FALLBACK_KEY = "keybinding_extra.delete_line_enabled";
 const EXTRACT_WORD_ENABLED_ID = "keybinding_extra.extract_word_enabled";
 const EXTRACT_WORD_FALLBACK_KEY = "keybinding_extra.extract_word_enabled";
 
-window.DEBUG_MODE = false;
+window.DEBUG_MODE = true;
 
 if (!window.DEBUG_MODE) {
     console.log = () => {};

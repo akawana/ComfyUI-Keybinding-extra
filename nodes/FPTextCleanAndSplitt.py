@@ -2,21 +2,23 @@ import re
 import os
 import json
 
-class TextCleanerSplitter:
+
+class FPTextCleanAndSplitt:
     @classmethod
     def INPUT_TYPES(cls):
         return {
-            "required": {},
+            "required": {
+                "text": ("STRING", {
+                    "multiline": True,
+                    "default": "",
+                    "forceInput": True
+                }),
+            },
             "optional": {
                 "before_text": ("STRING", {
                     "multiline": False,
                     "default": "",
-                    "forceInput": True           
-                }),
-                "text": ("STRING", {
-                    "multiline": True,
-                    "default": "",
-                    "placeholder": "Main text..."
+                    "forceInput": True
                 }),
                 "after_text": ("STRING", {
                     "multiline": False,
@@ -29,8 +31,7 @@ class TextCleanerSplitter:
     RETURN_TYPES = ("STRING", "LIST")
     RETURN_NAMES = ("cleaned_text", "ar_list")
     FUNCTION = "execute"
-    CATEGORY = "utils/primitive"
-    DEPRECATED = True
+    CATEGORY = "prompt/utils"
 
     def execute(self, before_text=None, text="", after_text=None):
         # Build full text from inputs (None or missing = ignore)
@@ -129,7 +130,8 @@ class TextCleanerSplitter:
 
     def get_comment_prefix(self):
         try:
-            settings_path = os.path.join(os.path.dirname(__file__), "..", "..", "..", "user", "settings.json")
+            settings_path = os.path.join(os.path.dirname(
+                __file__), "..", "..", "..", "user", "settings.json")
             if os.path.exists(settings_path):
                 with open(settings_path, "r", encoding="utf-8") as f:
                     data = json.load(f)
@@ -142,9 +144,9 @@ class TextCleanerSplitter:
 
 
 NODE_CLASS_MAPPINGS = {
-    "TextCleanerSplitter": TextCleanerSplitter
+    "FPTextCleanAndSplitt": FPTextCleanAndSplitt
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "TextCleanerSplitter": "Text Cleaner & Splitter (DEPRECATED)"
+    "FPTextCleanAndSplitt": "FP Text Clean And Splitt"
 }
