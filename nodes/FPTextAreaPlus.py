@@ -39,7 +39,7 @@ class FPTextAreaPlus:
         if after_text is not None and after_text != "":
             parts.append(str(after_text))
 
-        full_text = "\n".join(parts)
+        full_text = "\n\n".join(parts)
         return (full_text,)
 
 
