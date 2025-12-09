@@ -1,11 +1,12 @@
 [project]
 name = "Comfyui-Folded-prompts"
 publisher = "akawana2"
-version = "2.00"
-frontend_version = "2.00"
+version = "2.01"
+frontend_version = "2.01"
 description = "Builds a folder-based tree from prompt lines. Lets you organize prompts into folders. Also adds several configurable keybindings for text editing (line commenting, regional prompting areas). Splits the prompt into regions for Regional Prompting."
 readme = "README.md"
 requires-python = ">=3.10"
+
 
 packages = ["nodes"]
 
@@ -24,4 +25,4 @@ tags = ["prompt", "three", "regional prompting", "shortcuts"]
 [tool.comfy]
 PublisherId = "akawana2" # TODO (fill in Publisher ID from Comfy Registry Website).
 DisplayName = "Comfyui Folded prompts" # Display name for the Custom Node. Can be changed later.
-Icon = "https://example.com/icon.png"
+Icon = "https://raw.githubusercontent.com/akawana/ComfyUI-Utils-extra/refs/heads/main/icon.jpg"
