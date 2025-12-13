@@ -20,8 +20,10 @@ import { app } from "../../../scripts/app.js";
     const TREE_CONTROL_OFFSET_Y = -2;
 
 
-    const TREE_WEIGHT_MIN = 1.0;
+    const TREE_WEIGHT_BASE = 1.0;
+    const TREE_WEIGHT_MIN = 0.10;
     const TREE_WEIGHT_STEP = 0.05;
+
     const TREE_WEIGHT_COL_WIDTH = 80;
     const TREE_WEIGHT_BUTTON_SIZE = 18;
     const TREE_WEIGHT_TEXT_BOX_WIDTH = 40;
@@ -145,20 +147,19 @@ import { app } from "../../../scripts/app.js";
     // Detect weight from a full line text without changing the text itself.
     // Pattern: "(anything:1.23)" with optional comma and spaces after.
     function detectLineWeightFromText(text) {
-        if (text == null) return TREE_WEIGHT_MIN;
+        if (text == null) return TREE_WEIGHT_BASE;
         try {
             const m = String(text).match(/^\(([\s\S]*):([0-9]+(?:\.[0-9]+)?)\)\s*(,\s*)?$/);
             if (m) {
                 const num = parseFloat(m[2]);
                 if (Number.isFinite(num) && num >= TREE_WEIGHT_MIN) {
-                    // round to 2 decimals to avoid float noise
                     return Math.round(num * 100) / 100;
                 }
             }
         } catch (e) {
             console.warn("[FPFoldedPrompts] detectLineWeightFromText error", e);
         }
-        return TREE_WEIGHT_MIN;
+        return TREE_WEIGHT_BASE;
     }
 
     // Apply weight to a raw line text.
@@ -168,7 +169,7 @@ import { app } from "../../../scripts/app.js";
     //   "(text_without_trailing_comma:weight)" and move the comma outside.
     function applyWeightToLineText(rawText, weight) {
         let text = rawText == null ? "" : String(rawText);
-        let w = (typeof weight === "number" && Number.isFinite(weight)) ? weight : TREE_WEIGHT_MIN;
+        let w = (typeof weight === "number" && Number.isFinite(weight)) ? weight : TREE_WEIGHT_BASE;
         if (w < TREE_WEIGHT_MIN) w = TREE_WEIGHT_MIN;
         // round to 2 decimals
         w = Math.round(w * 100) / 100;
@@ -185,7 +186,7 @@ import { app } from "../../../scripts/app.js";
 
             // Если новый вес == 1.0 — убираем скобки и вес,
             // в конце оставляем ", "
-            if (w <= TREE_WEIGHT_MIN + EPS) {
+            if (Math.abs(w - TREE_WEIGHT_BASE) <= EPS) {
                 // убираем возможную запятую и пробелы в конце inner
                 let cleaned = inner.replace(/\s*,\s*$/, "");
                 return cleaned + ", ";
@@ -200,7 +201,7 @@ import { app } from "../../../scripts/app.js";
         }
 
         // Case 2: no weight in text
-        if (w <= TREE_WEIGHT_MIN + EPS) {
+        if (Math.abs(w - TREE_WEIGHT_BASE) <= EPS) {
             // base weight => don't touch text
             return text;
         }
@@ -946,10 +947,9 @@ import { app } from "../../../scripts/app.js";
 
             // Draw weight controls for line rows (number + [-] and [+] buttons).
             if (row.type === "line") {
-                let weight = typeof item.weight === "number" ? item.weight : TREE_WEIGHT_MIN;
-                if (!isFinite(weight) || weight < TREE_WEIGHT_MIN) {
-                    weight = TREE_WEIGHT_MIN;
-                }
+                let weight = typeof item.weight === "number" ? item.weight : TREE_WEIGHT_BASE;
+                if (!isFinite(weight)) weight = TREE_WEIGHT_BASE;
+                if (weight < TREE_WEIGHT_MIN) weight = TREE_WEIGHT_MIN;
                 item.weight = weight;
 
                 const btnSize = TREE_WEIGHT_BUTTON_SIZE;
@@ -980,7 +980,8 @@ import { app } from "../../../scripts/app.js";
                 ctx.fillText("+", plusX + btnSize / 2 - 5, rowCenterCanvas + 1);
 
                 // Weight value box — only show text when weight > 1.0
-                if (weight > TREE_WEIGHT_MIN + 0.0001) {
+                const EPS = 1e-6;
+                if (Math.abs(weight - TREE_WEIGHT_BASE) > EPS) {
                     const weightText = weight.toFixed(2);
                     ctx.strokeStyle = "#555";
                     ctx.fillStyle = "#111";
@@ -1121,10 +1122,9 @@ import { app } from "../../../scripts/app.js";
                 localY >= minusYLocal &&
                 localY <= minusYLocal + btnSizeLocal
             ) {
-                let w = typeof item.weight === "number" ? item.weight : TREE_WEIGHT_MIN;
-                if (!isFinite(w) || w < TREE_WEIGHT_MIN) {
-                    w = TREE_WEIGHT_MIN;
-                }
+                let w = typeof item.weight === "number" ? item.weight : TREE_WEIGHT_BASE;
+                if (!isFinite(w)) w = TREE_WEIGHT_BASE;
+
                 w -= TREE_WEIGHT_STEP;
                 if (w < TREE_WEIGHT_MIN) w = TREE_WEIGHT_MIN;
                 // round to 2 decimals to avoid FP noise
@@ -1147,10 +1147,9 @@ import { app } from "../../../scripts/app.js";
                 localY >= plusYLocal &&
                 localY <= plusYLocal + btnSizeLocal
             ) {
-                let w = typeof item.weight === "number" ? item.weight : TREE_WEIGHT_MIN;
-                if (!isFinite(w) || w < TREE_WEIGHT_MIN) {
-                    w = TREE_WEIGHT_MIN;
-                }
+                let w = typeof item.weight === "number" ? item.weight : TREE_WEIGHT_BASE;
+                if (!isFinite(w)) w = TREE_WEIGHT_BASE;
+
                 w += TREE_WEIGHT_STEP;
                 // round to 2 decimals
                 w = Math.round(w * 100) / 100;
@@ -1353,7 +1352,7 @@ import { app } from "../../../scripts/app.js";
                     "custom",
                     "FPFoldedPromptsTree",
                     null,
-                    () => {},
+                    () => { },
                     { serialize: false }
                 );
                 s.treeWidget = treeWidget;
