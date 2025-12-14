@@ -67,10 +67,10 @@ class FPFoldedPrompts:
             print(f"[FPFoldedPrompts] Failed to create data dir: {e}")
             traceback.print_exc()
 
-    @classmethod
-    def IS_CHANGED(cls, **kwargs):
-        # Force recompute on any widget change
-        return float("NaN")
+    # @classmethod
+    # def IS_CHANGED(cls, **kwargs):
+    #     # Force recompute on any widget change
+    #     return float("NaN")
 
     @staticmethod
     def _merge_before(before_text: str, main_text: str) -> str:

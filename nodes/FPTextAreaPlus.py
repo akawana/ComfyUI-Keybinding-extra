@@ -11,12 +11,12 @@ class FPTextAreaPlus:
             },
             "optional": {
                 "before_text": ("STRING", {
-                    "multiline": False,
+                    "multiline": True,
                     "default": "",
                     "forceInput": True
                 }),
                 "after_text": ("STRING", {
-                    "multiline": False,
+                    "multiline": True,
                     "default": "",
                     "forceInput": True
                 }),

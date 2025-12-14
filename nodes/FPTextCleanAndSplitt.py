@@ -34,6 +34,31 @@ class FPTextCleanAndSplitt:
     CATEGORY = "prompt/utils"
     OUTPUT_NODE = False
 
+    @classmethod
+    def IS_CHANGED(cls, before_text=None, text="", after_text=None, **kwargs):
+        before_text = before_text or ""
+        text = text or ""
+        after_text = after_text or ""
+
+        full = "\n\n".join([s for s in (before_text, text, after_text) if s != ""])
+
+        # Удаляем AR-блоки (и inline, и многострочные) — чтобы правки внутри AR не трогали cache key
+        cleaned_for_hash = re.sub(
+            r"<AR([1-5])>(?:(?!</>).)*</>",
+            "",
+            full,
+            flags=re.IGNORECASE | re.DOTALL
+        )
+
+        # Нормализуем переводы строк и "мусор" вокруг запятых
+        cleaned_for_hash = cleaned_for_hash.replace("\r\n", "\n").replace("\r", "\n")
+        cleaned_for_hash = re.sub(r"\s*,\s*", ", ", cleaned_for_hash)       # пробелы вокруг запятых
+        cleaned_for_hash = re.sub(r"(?:,\s*){2,}", ", ", cleaned_for_hash)  # ", ," -> ", "
+        cleaned_for_hash = re.sub(r"(?:,\s*)+$", "", cleaned_for_hash).strip()
+
+        return hash(cleaned_for_hash)
+
+
     def execute(self, before_text=None, text="", after_text=None):
         # Build full text from inputs (None or missing = ignore)
         parts = []
@@ -67,19 +92,30 @@ class FPTextCleanAndSplitt:
                 continue
 
             # Detect <AR1> to <AR5>
-            inline_match = re.search(r"<AR([1-5])>(.*?)</>", raw_line, re.IGNORECASE)
-            if inline_match:
-                tag_num = int(inline_match.group(1))
-                content = inline_match.group(2).strip()
-                if content:
-                    ar_contents[f"AR{tag_num}"].append(content)
+            # inline_match = re.search(r"<AR([1-5])>(.*?)</>", raw_line, re.IGNORECASE)
+            # Collect ALL inline <ARn>...</> tags on this line, then remove them all
+            inline_matches = list(re.finditer(r"<AR([1-5])>(.*?)</>", raw_line, re.IGNORECASE))
+            if inline_matches:
+                for m in inline_matches:
+                    tag_num = int(m.group(1))
+                    content = m.group(2).strip()
+                    if content:
+                        ar_contents[f"AR{tag_num}"].append(content)
 
-                start, end = inline_match.span()
-                before = raw_line[:start]
-                after = raw_line[end:]
-                remaining = (before + after).rstrip("\n")
-                if remaining.strip():
-                    cleaned_lines.append(remaining.rstrip())
+                # Remove all inline tags from the line
+                remaining = re.sub(r"<AR([1-5])>.*?</>", "", raw_line, flags=re.IGNORECASE)
+                remaining = remaining.replace("\r\n", "\n").rstrip("\n")
+
+                remaining = re.sub(r"\s*,\s*", ", ", remaining)
+                remaining = re.sub(r"(?:,\s*){2,}", ", ", remaining)
+                remaining = re.sub(r"(?:,\s*)+$", "", remaining).rstrip()
+
+                if remaining:
+                    if not remaining.endswith(","):
+                        remaining += ","
+                        remaining += " "
+                    cleaned_lines.append(remaining)
+
                 i += 1
                 continue
 
@@ -133,7 +169,12 @@ class FPTextCleanAndSplitt:
                 cleaned_lines.append(raw_line.rstrip())
             i += 1
 
-        cleaned_text = "\n".join(cleaned_lines)
+        # cleaned_text = "\n".join(cleaned_lines)
+        cleaned_text = "\n".join([ln.rstrip().replace("\r\n", "\n") for ln in cleaned_lines]).strip()
+
+        # print("[cleaned] len=", len(cleaned_text), "hash=", hash(cleaned_text), "repr_end=", repr(cleaned_text[-80:]))
+
+        # print("[dbg] len=", len(text), "hash=", hash(text), "repr=", repr(text[-50:]))
 
         ar_list = []
         for n in range(1, 6):

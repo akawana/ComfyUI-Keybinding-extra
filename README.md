@@ -1,20 +1,23 @@
 ## Other My Nodes
 
-Utilities for working with Lists and toggling groups
+Utilities for working with Lists, Regions, Toggling groups, Caching conditions: [ComfyUI Utils Extra](https://github.com/akawana/ComfyUI-Utils-extra)
 
-https://github.com/akawana/ComfyUI-Utils-extra
+Folding of promts in to tree with extra features. Extra shortcuts for editing prompts. Reginal prompting text separation: [ComfyUI Folded Prompts](https://github.com/akawana/ComfyUI-Folded-Prompts)
 
-Folding of promts in to tree with extra features. Extra shortcuts for editing prompts. Reginal prompting text separation.
-
-https://github.com/akawana/ComfyUI-Folded-Prompts
-
-RGBYP 5-color mask editor
-
-https://github.com/akawana/ComfyUI-RGBYP-Mask-Editor
+RGBYP 5-color mask editor: [ComfyUI RGBYP Mask Editor](https://github.com/akawana/ComfyUI-RGBYP-Mask-Editor)
 
 ---
 
 ## Version changes
+
+**V 3.00**
+
+In my node pack [ComfyUI Utils Extra](https://github.com/akawana/ComfyUI-Utils-extra), I’ve added a new node called **“CLIP Text Encode Cached”**. I highly recommend using it together with **FPFoldedPrompts** and **FPTextAreaPlus**!
+
+This node can cache the previous **CONDITIONING** and avoids re-encoding. Unfortunately, ComfyUI is designed in such a way that if you change anything in **FPFoldedPrompts** or **FPTextAreaPlus**, the encode step will always be triggered. However, you often change text inside the `<ARn>` tags, and this should *not* cause a re-encode of the main text.
+
+I also want to remind you that the same pack [ComfyUI Utils Extra](https://github.com/akawana/ComfyUI-Utils-extra) includes the **CLIPEncodeMultiple** node, which is specifically designed to encode individual lines `<AR1>`…`<AR5>`. It simply works faster because it also uses caching.
+
 **V 2.0**
 Added line weight control to the "FP Folded Prompts" node. You can now set the weight of tags or any text.
 
