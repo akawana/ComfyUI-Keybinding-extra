@@ -19,6 +19,7 @@ This node can cache the previous **CONDITIONING** and avoids re-encoding. Unfort
 I also want to remind you that the same pack [ComfyUI Utils Extra](https://github.com/akawana/ComfyUI-Utils-extra) includes the **CLIPEncodeMultiple** node, which is specifically designed to encode individual lines `<AR1>`…`<AR5>`. It simply works faster because it also uses caching.
 
 **V 2.0**
+
 Added line weight control to the "FP Folded Prompts" node. You can now set the weight of tags or any text.
 
 ---
