@@ -1331,8 +1331,8 @@ import { app } from "../../../scripts/app.js";
                 // Reset button — standard callback on left mouse button
                 const resetButton = node.addWidget(
                     "button",
-                    "Reset",
-                    "Reset",
+                    "Uncheck all",
+                    "Uncheck all",
                     function () {
                         const st = node._pf;
                         if (!st || !st.tree) return;
