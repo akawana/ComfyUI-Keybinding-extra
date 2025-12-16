@@ -6,6 +6,8 @@ Folding of promts in to tree with extra features. Extra shortcuts for editing pr
 
 RGBYP 5-color mask editor: [ComfyUI RGBYP Mask Editor](https://github.com/akawana/ComfyUI-RGBYP-Mask-Editor)
 
+AK XZ Axis so called XY testing for any type of KSampler: [ComfyUI AK XZ Axis](https://github.com/akawana/ComfyUI-AK-XZ-Axis)
+
 ---
 
 ## Version changes
