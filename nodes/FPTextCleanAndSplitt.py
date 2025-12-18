@@ -28,8 +28,8 @@ class FPTextCleanAndSplitt:
             }
         }
 
-    RETURN_TYPES = ("STRING", "LIST")
-    RETURN_NAMES = ("cleaned_text", "ar_list")
+    RETURN_TYPES = ("STRING", "LIST", "STRING")
+    RETURN_NAMES = ("cleaned_text", "ar_list", "impact_wildcard")
     FUNCTION = "execute"
     CATEGORY = "prompt/utils"
     OUTPUT_NODE = False
@@ -181,7 +181,30 @@ class FPTextCleanAndSplitt:
             combined = "\n".join(ar_contents[f"AR{n}"]).strip()
             ar_list.append(combined if combined else None)
 
-        return (cleaned_text, ar_list)
+        impact_lines = ["[LAB]"]
+        for n in range(1, 6):
+            parts = ar_contents.get(f"AR{n}", [])
+            if not parts:
+                continue
+
+            flat = " ".join([str(p).replace("\r\n", "\n").replace("\r", "\n").strip() for p in parts if p is not None and str(p).strip() != ""])
+            flat = re.sub(r"\s*,\s*", ", ", flat)
+            flat = re.sub(r"(?:,\s*){2,}", ", ", flat)
+            flat = re.sub(r"(?:,\s*)+$", "", flat).strip()
+
+            if not flat:
+                continue
+
+            if not flat.endswith(","):
+                flat += ","
+            if flat.endswith(","):
+                flat += " "
+
+            impact_lines.append(f"[AR{n}]{flat}")
+
+        impact_wildcard = "\n".join(impact_lines)
+
+        return (cleaned_text, ar_list, impact_wildcard)
 
     def get_comment_prefix(self):
         try:
