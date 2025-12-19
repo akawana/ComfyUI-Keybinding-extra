@@ -1411,6 +1411,11 @@ import { app } from "../../../scripts/app.js";
 
 
                 updateModeUI(node);
+                node.onResize = function () {
+                    updateModeUI(node);
+                    node.graph?.setDirtyCanvas(true, true);
+                };
+
             };
             nodeType.prototype.onConfigure = function (info) {
                 const node = this;
